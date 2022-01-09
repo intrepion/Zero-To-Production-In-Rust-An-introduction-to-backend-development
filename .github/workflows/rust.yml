@@ -22,21 +22,15 @@ jobs:
     - uses: actions/checkout@v2
     - name: Check linting
       run: cd zero2prod && cargo clippy -- -D warnings
-  audit:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Audit security
-      run: cd zero2prod && cargo audit
   test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Run tests
       run: cd zero2prod && cargo test --verbose
-  coverage:
+  audit:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Run code coverage
-      run: cargo install cargo-tarpaulin && cd zero2prod && cargo tarpaulin --ignore-tests
+    - name: Audit security
+      run: cd zero2prod && cargo audit
