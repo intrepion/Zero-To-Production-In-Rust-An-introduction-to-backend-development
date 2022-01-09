@@ -39,4 +39,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run code coverage
-      run: cd zero2prod && cargo tarpaulin --ignore-tests
+      run: cargo install cargo-tarpaulin && cd zero2prod && cargo tarpaulin --ignore-tests
