@@ -10,13 +10,33 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  format:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-    - name: Build
-      run: cd zero2prod && cargo build --verbose
+    - name: Check formatting
+      run: cd zero2prod && cargo fmt -- --check
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check linting
+      run: cd zero2prod && cargo clippy -- -D warnings
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Audit security
+      run: cd zero2prod && cargo audit
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
     - name: Run tests
       run: cd zero2prod && cargo test --verbose
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run code coverage
+      run: cd zero2prod && cargo tarpaulin --ignore-tests
