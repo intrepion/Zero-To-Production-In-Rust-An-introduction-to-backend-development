@@ -33,4 +33,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Audit security
-      run: cd zero2prod && cargo audit --ignore RUSTSEC-2021-0131
+      run: cd zero2prod && cargo audit --ignore RUSTSEC-2021-0131 --ignore RUSTSEC-2020-0159
