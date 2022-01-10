@@ -52,7 +52,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            target
+            zero2prod/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -85,5 +85,8 @@ jobs:
         run: |
           sudo apt-get install libpq-dev -y
           SKIP_DOCKER=true ./scripts/init_db.sh
-      - name: Run tests
-        run: cd zero2prod && cargo test --verbose
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          path: zero2prod
+          command: test
