@@ -24,6 +24,18 @@ jobs:
         run: cd zero2prod && cargo audit --ignore RUSTSEC-2021-0131 --ignore RUSTSEC-2020-0159 --ignore RUSTSEC-2020-0071
   linter:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+    env:
+      SQLX_VERSION: 0.5.5
+      SQLX_FEATURES: postgres
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
