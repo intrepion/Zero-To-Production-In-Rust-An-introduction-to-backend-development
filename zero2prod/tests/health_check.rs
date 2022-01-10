@@ -1,4 +1,3 @@
-use log;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::net::TcpListener;
 use uuid::Uuid;
