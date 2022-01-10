@@ -86,7 +86,4 @@ jobs:
           sudo apt-get install libpq-dev -y
           SKIP_DOCKER=true ./scripts/init_db.sh
       - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          path: zero2prod
-          command: test
+        run: cd zero2prod && cargo test --verbose
