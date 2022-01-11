@@ -33,3 +33,6 @@ features = [
     "chrono",
     "migrate"
 ]
+
+[package.metadata.cargo-udeps.ignore]
+normal = ["reqwest"]
