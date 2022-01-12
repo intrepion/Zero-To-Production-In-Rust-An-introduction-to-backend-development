@@ -5,7 +5,7 @@ cargo audit --ignore RUSTSEC-2021-0131 --ignore RUSTSEC-2020-0159 --ignore RUSTS
 echo "---- cargo clippy ----" && \
 cargo clippy -- -D warnings && \
 echo "---- cargo test ----" && \
-cargo test --verbose && \
+cargo test --verbose -- --nocapture && \
 echo "---- cargo fmt ----" && \
 cargo fmt -- --check && \
 echo "---- cargo udeps ----" && \
