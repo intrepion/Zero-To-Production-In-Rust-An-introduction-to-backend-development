@@ -4,5 +4,5 @@ cargo check \
 && cargo test --verbose \
 && cargo fmt -- --check \
 && cargo +nightly udeps \
-&& cargo sqlx prepare --check -- --bin zero2prod
+&& cargo sqlx prepare --check -- --bin zero2prod \
 && RUST_LOG=trace cargo run
