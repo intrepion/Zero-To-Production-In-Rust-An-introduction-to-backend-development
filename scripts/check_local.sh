@@ -10,7 +10,5 @@ echo "---- cargo fmt ----" && \
 cargo fmt -- --check && \
 echo "---- cargo udeps ----" && \
 cargo +nightly udeps && \
-echo "---- cargo sqlx ----" && \
-cargo sqlx prepare --check -- --bin zero2prod && \
 echo "---- cargo run ----" && \
 RUST_LOG=trace cargo run

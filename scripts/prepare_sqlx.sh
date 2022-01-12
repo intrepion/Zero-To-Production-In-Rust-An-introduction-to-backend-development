@@ -1,1 +1,0 @@
-cargo sqlx prepare -- --lib
