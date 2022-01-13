@@ -6,3 +6,5 @@ database:
   password: "password"
   port: 5432
   username: "postgres"
+email_client:
+  authorization_token: "my-secret-token"
