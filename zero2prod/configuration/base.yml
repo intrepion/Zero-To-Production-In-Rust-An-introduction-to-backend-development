@@ -8,3 +8,4 @@ database:
   username: "postgres"
 email_client:
   authorization_token: "my-secret-token"
+  timeout_milliseconds: 10000
