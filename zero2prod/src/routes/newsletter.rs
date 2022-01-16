@@ -4,8 +4,8 @@ use crate::routes::error_chain_fmt;
 use actix_web::http::header::{HeaderMap, HeaderValue};
 use actix_web::http::{header, StatusCode};
 use actix_web::{web, HttpResponse, ResponseError};
-use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use anyhow::Context;
+use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use secrecy::{ExposeSecret, Secret};
 use sqlx::PgPool;
 
@@ -190,7 +190,7 @@ async fn validate_credentials(
     Argon2::default()
         .verify_password(
             credentials.password.expose_secret().as_bytes(),
-            &expected_password_hash
+            &expected_password_hash,
         )
         .context("Invalid password.")
         .map_err(PublishError::AuthError)?;
