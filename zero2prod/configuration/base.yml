@@ -1,4 +1,5 @@
 application:
+  hmac_secret: "super-long-and-secret-random-key-needed-to-verify-message-integrity"
   port: 8000
 database:
   database_name: "newsletter"

@@ -1911,6 +1911,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "sha2"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "99c3bd8169c58782adad9290a9af5939994036b76187f7b4f0e6de91dbbfc0ec"
+dependencies = [
+ "cfg-if",
+ "cpufeatures",
+ "digest 0.10.1",
+]
+
+[[package]]
 name = "sharded-slab"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2017,7 +2028,7 @@ dependencies = [
  "serde 1.0.133",
  "serde_json",
  "sha-1 0.9.8",
- "sha2",
+ "sha2 0.9.9",
  "smallvec",
  "sqlformat",
  "sqlx-rt",
@@ -2046,7 +2057,7 @@ dependencies = [
  "quote",
  "serde 1.0.133",
  "serde_json",
- "sha2",
+ "sha2 0.9.9",
  "sqlx-core",
  "sqlx-rt",
  "syn",
@@ -2699,6 +2710,8 @@ dependencies = [
  "claim",
  "config 0.11.0",
  "fake",
+ "hex",
+ "hmac",
  "htmlescape",
  "linkify",
  "once_cell",
@@ -2710,6 +2723,7 @@ dependencies = [
  "serde 1.0.133",
  "serde-aux",
  "serde_json",
+ "sha2 0.10.1",
  "sqlx",
  "thiserror",
  "tokio",
