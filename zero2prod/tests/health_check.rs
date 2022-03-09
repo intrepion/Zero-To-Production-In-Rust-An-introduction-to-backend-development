@@ -7,7 +7,6 @@ async fn health_check_works() {
     let address = spawn_app();
     let client = reqwest::Client::new();
     let response = client
-        // Use the returned application address
         .get(&format!("{}/health_check", &address))
         .send()
         .await
@@ -36,7 +35,6 @@ async fn subscribe_returns_a_200_for_valid_form_data() {
         .await
         .expect("Failed to execute request.");
 
-    // Assert
     assert_eq!(200, response.status().as_u16());
     let saved = sqlx::query!("SELECT email, name FROM subscriptions",)
         .fetch_one(&mut connection)
