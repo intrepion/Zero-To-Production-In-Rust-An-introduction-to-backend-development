@@ -70,7 +70,8 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true ./scripts/init_db.sh
+          cd zero2prod
+          SKIP_DOCKER=true ../scripts/init_db.sh
       - name: Check linting
         run: cd zero2prod && cargo clippy -- -D warnings
   check:
@@ -127,7 +128,8 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true ./scripts/init_db.sh
+          cd zero2prod
+          SKIP_DOCKER=true ../scripts/init_db.sh
       - name: Check
         run: cd zero2prod && cargo check
   test:
@@ -184,7 +186,8 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true ./scripts/init_db.sh
+          cd zero2prod
+          SKIP_DOCKER=true ../scripts/init_db.sh
       - name: Run cargo test
         run: cd zero2prod && cargo test --verbose
   audit:
@@ -247,7 +250,8 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true ./scripts/init_db.sh
+          cd zero2prod
+          SKIP_DOCKER=true ../scripts/init_db.sh
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
         with:
@@ -314,7 +318,8 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true ./scripts/init_db.sh
+          cd zero2prod
+          SKIP_DOCKER=true ../scripts/init_db.sh
       - name: "Udeps Installation"
         uses: actions-rs/cargo@v1
         with:
