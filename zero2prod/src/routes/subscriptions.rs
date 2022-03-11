@@ -1,4 +1,4 @@
-use crate::domain::NewSubscriber;
+use crate::domain::{NewSubscriber, SubscriberName};
 use actix_web::{web, HttpResponse};
 use chrono::Utc;
 use sqlx::PgPool;
@@ -20,11 +20,11 @@ pub struct FormData {
     )
     )]
 pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
-    let subscriber_name = crate::domain::SubscriberName(form.name.clone());
-    if !is_valid_name(&form.name) {
-        return HttpResponse::BadRequest().finish();
-    }
-    match insert_subscriber(&pool, &form).await {
+    let new_subscriber = NewSubscriber {
+        email: form.0.email,
+        name: SubscriberName::parse(form.0.name),
+    };
+    match insert_subscriber(&pool, &new_subscriber).await {
         Ok(_) => HttpResponse::Ok().finish(),
         Err(_) => HttpResponse::InternalServerError().finish(),
     }
@@ -40,7 +40,7 @@ pub fn is_valid_name(s: &str) -> bool {
 
 #[tracing::instrument(
     name = "Saving new subscriber details in the database",
-    skip(pool, new_subscriber)
+    skip(new_subscriber, pool)
 )]
 pub async fn insert_subscriber(
     pool: &PgPool,
@@ -53,7 +53,7 @@ pub async fn insert_subscriber(
     "#,
         Uuid::new_v4(),
         new_subscriber.email,
-        new_subscriber.name,
+        new_subscriber.name.inner_ref(),
         Utc::now()
     )
     .execute(pool)
