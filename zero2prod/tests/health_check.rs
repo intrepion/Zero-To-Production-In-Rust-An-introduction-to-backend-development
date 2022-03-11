@@ -1,5 +1,3 @@
-use secrecy::ExposeSecret;
-
 #[tokio::test]
 async fn health_check_works() {
     let test_app = spawn_app().await;
@@ -65,6 +63,7 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
 }
 
 use once_cell::sync::Lazy;
+use secrecy::ExposeSecret;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::net::TcpListener;
 use uuid::Uuid;
