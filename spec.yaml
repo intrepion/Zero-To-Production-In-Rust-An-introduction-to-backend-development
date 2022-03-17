@@ -8,7 +8,22 @@ name: zero2prod
 region: sfo3
 services:
 - dockerfile_path: zero2prod/Dockerfile
-  name: zero2prod
+  envs:
+  - key: APP_DATABASE__DATABASE_NAME
+    scope: RUN_TIME
+    value: ${newsletter.DATABASE}
+  - key: APP_DATABASE__HOST
+    scope: RUN_TIME
+    value: ${newsletter.HOSTNAME}
+  - key: APP_DATABASE__PASSWORD
+    scope: RUN_TIME
+    value: ${newsletter.PASSWORD}
+  - key: APP_DATABASE__PORT
+    scope: RUN_TIME
+    value: ${newsletter.PORT}
+  - key: APP_DATABASE__USERNAME
+    scope: RUN_TIME
+    value: ${newsletter.USERNAME}
   github:
     branch: main
     deploy_on_push: true
@@ -18,6 +33,7 @@ services:
   http_port: 8000
   instance_count: 1
   instance_size_slug: basic-xxs
+  name: zero2prod
   routes:
-  - path: /
+    - path: /
   source_dir: zero2prod
