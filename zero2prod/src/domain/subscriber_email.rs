@@ -41,4 +41,10 @@ mod tests {
         let email = "@domain.com".to_string();
         assert_err!(SubscriberEmail::parse(email));
     }
+
+    #[test]
+    fn valid_emails_are_parsed_successfully() {
+        let email = SafeEmail().fake();
+        claim::assert_ok!(SubscriberEmail::parse(email));
+    }
 }
