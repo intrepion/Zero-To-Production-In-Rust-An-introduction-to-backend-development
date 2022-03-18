@@ -1,3 +1,4 @@
+use crate::domain::NewSubscriber;
 use actix_web::{web, HttpResponse};
 use chrono::Utc;
 use sqlx::PgPool;
@@ -14,7 +15,10 @@ pub struct FormData {
     name = "Saving new subscriber details in the database",
     skip(form, pool)
 )]
-pub async fn insert_subscriber(pool: &PgPool, form: &FormData) -> Result<(), sqlx::Error> {
+pub async fn insert_subscriber(
+    pool: &PgPool,
+    new_subscriber: &NewSubscriber,
+) -> Result<(), sqlx::Error> {
     sqlx::query!(
         r#"
     INSERT INTO subscriptions (id, email, name, subscribed_at)
@@ -53,6 +57,7 @@ pub fn is_valid_name(s: &str) -> bool {
     )
     )]
 pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
+    let subscriber_name = crate::domain::SubscriberName(form.name.clone());
     if !is_valid_name(&form.name) {
         return HttpResponse::BadRequest().finish();
     }
