@@ -9,6 +9,9 @@ region: sfo3
 services:
 - dockerfile_path: zero2prod/Dockerfile
   envs:
+  - key: APP_APPLICATION__BASE_URL
+    scope: RUN_TIME
+    value: ${APP_URL}
   - key: APP_DATABASE__DATABASE_NAME
     scope: RUN_TIME
     value: ${newsletter.DATABASE}
