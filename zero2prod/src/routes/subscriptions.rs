@@ -49,7 +49,17 @@ impl std::fmt::Display for StoreTokenError {
     }
 }
 
-impl ResponseError for StoreTokenError {}
+#[derive(Debug)]
+struct SubscribeError {}
+
+impl std::fmt::Display for SubscribeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Failed to create a new subscriber.")
+    }
+}
+impl std::error::Error for SubscribeError {}
+
+impl ResponseError for SubscribeError {}
 
 fn error_chain_fmt(
     e: &impl std::error::Error,
