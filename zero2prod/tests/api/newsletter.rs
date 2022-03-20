@@ -4,26 +4,13 @@ use wiremock::{
     Mock, ResponseTemplate,
 };
 
-#[tokio::test]
-async fn newsletters_are_not_delivered_to_unconfirmed_subscribers() {
-    let app = spawn_app().await;
-    create_unconfirmed_subscriber(&app).await;
-    Mock::given(any())
-        .respond_with(ResponseTemplate::new(200))
-        .expect(0)
-        .mount(&app.email_server)
-        .await;
-
-    let newsletter_request_body = serde_json::json!({
-    "title": "Newsletter title",
-    "content": {
-    "text": "Newsletter body as plain text",
-    "html": "<p>Newsletter body as HTML</p>",
-    }
-    });
-    let response = app.post_newsletters(newsletter_request_body).await;
-
-    assert_eq!(response.status().as_u16(), 200);
+async fn create_confirmed_subscriber(app: &TestApp) {
+    let confirmation_link = create_unconfirmed_subscriber(app).await;
+    reqwest::get(confirmation_link.html)
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap();
 }
 
 async fn create_unconfirmed_subscriber(app: &TestApp) -> ConfirmationLinks {
@@ -50,15 +37,6 @@ async fn create_unconfirmed_subscriber(app: &TestApp) -> ConfirmationLinks {
     app.get_confirmation_links(&email_request)
 }
 
-async fn create_confirmed_subscriber(app: &TestApp) {
-    let confirmation_link = create_unconfirmed_subscriber(app).await;
-    reqwest::get(confirmation_link.html)
-        .await
-        .unwrap()
-        .error_for_status()
-        .unwrap();
-}
-
 #[tokio::test]
 async fn newsletters_are_delivered_to_confirmed_subscribers() {
     let app = spawn_app().await;
@@ -67,6 +45,28 @@ async fn newsletters_are_delivered_to_confirmed_subscribers() {
         .and(method("POST"))
         .respond_with(ResponseTemplate::new(200))
         .expect(1)
+        .mount(&app.email_server)
+        .await;
+
+    let newsletter_request_body = serde_json::json!({
+    "title": "Newsletter title",
+    "content": {
+    "text": "Newsletter body as plain text",
+    "html": "<p>Newsletter body as HTML</p>",
+    }
+    });
+    let response = app.post_newsletters(newsletter_request_body).await;
+
+    assert_eq!(response.status().as_u16(), 200);
+}
+
+#[tokio::test]
+async fn newsletters_are_not_delivered_to_unconfirmed_subscribers() {
+    let app = spawn_app().await;
+    create_unconfirmed_subscriber(&app).await;
+    Mock::given(any())
+        .respond_with(ResponseTemplate::new(200))
+        .expect(0)
         .mount(&app.email_server)
         .await;
 
