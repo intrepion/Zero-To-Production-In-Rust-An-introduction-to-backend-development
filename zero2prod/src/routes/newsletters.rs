@@ -1,17 +1,18 @@
-use crate::{domain::SubscriberEmail, email_client::EmailClient, routes::error_chain_fmt};
+use crate::{
+    domain::SubscriberEmail, email_client::EmailClient, routes::error_chain_fmt,
+    telemetry::spawn_blocking_with_tracing,
+};
 use actix_web::{
     http::{
         header::{self, HeaderMap, HeaderValue},
         StatusCode,
     },
-    rt::spawn,
     web, HttpRequest, HttpResponse, ResponseError,
 };
 use anyhow::Context;
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use secrecy::{ExposeSecret, Secret};
 use sqlx::PgPool;
-use tokio::task::spawn_blocking;
 
 #[derive(serde::Deserialize)]
 pub struct BodyData {
@@ -194,8 +195,9 @@ async fn validate_credentials(
     let expected_password_hash = PasswordHash::new(&expected_password_hash.expose_secret())
         .map_err(PublishError::UnexpectedError)?;
 
-    tokio::task::spawn_blocking(move || {
-        verify_password_hash(expected_password_hash, credentials.password)
+    let current_span = tracing::Span::current();
+    spawn_blocking_with_tracing(move || {
+        current_span.in_scope(|| verify_password_hash(expected_password_hash, credentials.password))
     })
     .await
     .context("Failed to spawn blocking task.")
