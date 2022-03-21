@@ -53,7 +53,8 @@ pub async fn publish_newsletter(
                 &body.content.html,
                 &body.content.text,
             )
-            .await?;
+            .await
+            .with_context(|| format!("Failed to send newsletter issue to {}", subscriber.email))?;
     }
     Ok(HttpResponse::Ok().finish())
 }
