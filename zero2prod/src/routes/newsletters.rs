@@ -51,7 +51,7 @@ pub async fn publish_newsletter(
             Ok(subscriber) => {
                 email_client
                     .send_email(
-                        subscriber.email,
+                        &subscriber.email,
                         &body.title,
                         &body.content.html,
                         &body.content.text,
@@ -63,11 +63,7 @@ pub async fn publish_newsletter(
             }
             Err(error) => {
                 tracing::warn!(
-                // We record the error chain as a structured field
-                // on the log record.
                 error.cause_chain = ?error,
-                // Using `\` to split a long string literal over
-                // two lines, without creating a `\n` character.
                 "Skipping a confirmed subscriber. \
                 Their stored contact details are invalid",
                 );
