@@ -1,6 +1,10 @@
 name: rust
 
-on: [pull_request, push]
+on:
+  push:
+    branches: [ zero2prod_with_cover_20220710 ]
+  pull_request:
+    branches: [ zero2prod_with_cover_20220710 ]
 
 env:
   CARGO_TERM_COLOR: always
