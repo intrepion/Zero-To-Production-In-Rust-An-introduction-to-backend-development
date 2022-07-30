@@ -62,22 +62,27 @@ struct SendEmailRequest {
 
 #[cfg(test)]
 mod tests {
-    use crate::domain::SubscriberEmail;
-    use crate::email_client::EmailClient;
+    use crate::{domain::SubscriberEmail, email_client::EmailClient};
     use fake::{
         faker::internet::en::SafeEmail,
         faker::lorem::en::{Paragraph, Sentence},
         Fake, Faker,
     };
     use secrecy::Secret;
-    use wiremock::{matchers::any, Mock, MockServer, ResponseTemplate};
+    use wiremock::{
+        matchers::{header, header_exists, method, path},
+        Mock, MockServer, ResponseTemplate,
+    };
 
     #[tokio::test]
     async fn send_email_fires_a_request_to_base_url() {
         let mock_server = MockServer::start().await;
         let sender = SubscriberEmail::parse(SafeEmail().fake()).unwrap();
         let email_client = EmailClient::new(mock_server.uri(), sender, Secret::new(Faker.fake()));
-        Mock::given(any())
+        Mock::given(header_exists("X-Postmark-Server-Token"))
+            .and(header("Content-Type", "application/json"))
+            .and(path("/email"))
+            .and(method("POST"))
             .respond_with(ResponseTemplate::new(200))
             .expect(1)
             .mount(&mock_server)
