@@ -59,5 +59,23 @@
       }
     },
     "query": "INSERT INTO subscription_tokens (subscription_token, subscriber_id)\n    VALUES ($1, $2)"
+  },
+  "e5550a9aee746bdf50022375fec002b53598b47adab5c98941b958126f985350": {
+    "describe": {
+      "columns": [
+        {
+          "name": "email",
+          "ordinal": 0,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\nSELECT email\nFROM subscriptions\nWHERE status = 'confirmed'\n"
   }
 }
