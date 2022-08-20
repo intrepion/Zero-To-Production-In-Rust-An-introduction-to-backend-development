@@ -1,9 +1,11 @@
-use crate::authentication::AuthError;
-use crate::authentication::{validate_credentials, Credentials};
-use crate::routes::error_chain_fmt;
-use actix_web::http::StatusCode;
-use actix_web::{http::header::LOCATION, web, HttpResponse};
-use actix_web::{web, ResponseError};
+use crate::{
+    authentication::{validate_credentials, AuthError, Credentials},
+    routes::error_chain_fmt,
+};
+use actix_web::{
+    http::{header::LOCATION, StatusCode},
+    web, HttpResponse, ResponseError,
+};
 use secrecy::Secret;
 use sqlx::PgPool;
 
@@ -28,11 +30,13 @@ impl std::fmt::Debug for LoginError {
 }
 
 impl ResponseError for LoginError {
+    fn error_response(&self) -> HttpResponse {
+        HttpResponse::build(self.status_code())
+            .insert_header((LOCATION, "/login"))
+            .finish()
+    }
     fn status_code(&self) -> StatusCode {
-        match self {
-            LoginError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            LoginError::AuthError(_) => StatusCode::UNAUTHORIZED,
-        }
+        StatusCode::SEE_OTHER
     }
 }
 
