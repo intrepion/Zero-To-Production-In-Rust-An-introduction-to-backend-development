@@ -81,6 +81,7 @@ pub fn run(
             .route("/health_check", web::get().to(health_check))
             .route("/newsletters", web::post().to(publish_newsletter))
             .route("/login", web::get().to(login_form))
+            .route("/login", web::post().to(login))
             .route("/", web::get().to(home))
             .app_data(db_pool.clone())
             .app_data(email_client.clone())
