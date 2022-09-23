@@ -295,7 +295,7 @@ jobs:
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
         with:
-          args: '--ignore-tests --avoid-cfg-tarpaulin
+          args: '--ignore-tests --avoid-cfg-tarpaulin'
   unused:
     runs-on: ubuntu-latest
     services:
