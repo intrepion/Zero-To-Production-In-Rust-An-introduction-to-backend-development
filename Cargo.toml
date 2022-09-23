@@ -9,7 +9,6 @@ edition = "2021"
 actix-web = "4"
 chrono = "0.4.15"
 config = "0.13"
-log = "0.4"
 serde = { version = "1", features = ["derive"]}
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 tracing = { version = "0.1", features = ["log"] }
