@@ -2,9 +2,9 @@ name: rust
 
 on:
   push:
-    branches: [ "zero2prod_with_cover_20220922" ]
+    branches: [ "zero2prod_with_cover_20220923" ]
   pull_request:
-    branches: [ "zero2prod_with_cover_20220922" ]
+    branches: [ "zero2prod_with_cover_20220923" ]
 
 env:
   CARGO_TERM_COLOR: always
