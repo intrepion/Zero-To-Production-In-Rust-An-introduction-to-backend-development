@@ -218,18 +218,6 @@ jobs:
       run: cargo audit --ignore RUSTSEC-2020-0071 --ignore RUSTSEC-2021-0139
   unused:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:12
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: postgres
-        ports:
-          - 5432:5432
-    env:
-      SQLX_VERSION: 0.6.2
-      SQLX_FEATURES: postgres
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -254,43 +242,6 @@ jobs:
         with:
           command: install
           args: cargo-udeps --locked
-
-
-      - name: Cache sqlx-cli
-        uses: actions/cache@v2
-        id: cache-sqlx
-        with:
-          path: |
-            ~/.cargo/bin/sqlx
-            ~/.cargo/bin/cargo-sqlx
-          key: ${{ runner.os }}-sqlx-${{ env.SQLX_VERSION }}-${{ env.SQLX_FEATURES }}
-
-      - name: Install sqlx-cli 
-        uses: actions-rs/cargo@v1
-        if: steps.cache-sqlx.outputs.cache-hit == false
-        with:
-          command: install 
-          args: >
-            sqlx-cli
-            --force
-            --version=${{ env.SQLX_VERSION }}
-            --features=rustls,${{ env.SQLX_FEATURES }}
-            --no-default-features
-            --locked
-
-      - name: Migrate database
-        run: |
-          sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true ./scripts/init_db.sh
-
-      - name: Check sqlx-data.json is up-to-date
-        run: |
-          cargo sqlx prepare --check -- --bin zero2prod
-
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
 
       - name: Unused
         run: cargo +nightly udeps
