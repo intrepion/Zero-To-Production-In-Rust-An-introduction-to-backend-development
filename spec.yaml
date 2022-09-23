@@ -5,7 +5,7 @@ services:
     dockerfile_path: Dockerfile
     source_dir: .
     github:
-    branch: main
+      branch: main
       deploy_on_push: true
       repo: intrepion/Zero-To-Production-In-Rust-An-introduction-to-backend-development
     health_check:
