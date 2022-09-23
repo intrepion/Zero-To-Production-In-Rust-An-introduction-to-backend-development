@@ -1,4 +1,4 @@
-name: rust
+name: zero2prod_with_cover_20220923
 
 on:
   push:
@@ -253,7 +253,7 @@ jobs:
         ports:
           - 5432:5432
     env:
-      SQLX_VERSION: 0.6.2
+      SQLX_VERSION: 0.6.0
       SQLX_FEATURES: postgres
     steps:
       - name: Checkout repository
