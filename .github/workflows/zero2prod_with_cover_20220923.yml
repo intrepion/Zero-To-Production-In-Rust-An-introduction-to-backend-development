@@ -64,7 +64,7 @@ jobs:
             sqlx-cli
             --force
             --version=${{ env.SQLX_VERSION }}
-            --features=${{ env.SQLX_FEATURES }}
+            --features=rustls,${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
 
@@ -140,7 +140,7 @@ jobs:
             sqlx-cli
             --force
             --version=${{ env.SQLX_VERSION }}
-            --features=${{ env.SQLX_FEATURES }}
+            --features=rustls,${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
 
@@ -197,7 +197,7 @@ jobs:
             sqlx-cli
             --force
             --version=${{ env.SQLX_VERSION }}
-            --features=${{ env.SQLX_FEATURES }}
+            --features=rustls,${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
 
@@ -258,7 +258,7 @@ jobs:
             sqlx-cli
             --force
             --version=${{ env.SQLX_VERSION }}
-            --features=${{ env.SQLX_FEATURES }}
+            --features=rustls,${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
 
