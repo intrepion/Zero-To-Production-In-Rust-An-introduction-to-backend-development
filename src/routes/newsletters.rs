@@ -13,6 +13,12 @@ struct ConfirmedSubscriber {
     email: SubscriberEmail,
 }
 
+impl std::fmt::Display for SubscriberEmail {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
 #[derive(serde::Deserialize)]
 pub struct Content {
     html: String,
@@ -78,7 +84,7 @@ pub async fn publish_newsletter(
             Ok(subscriber) => {
                 email_client
                     .send_email(
-                        subscriber.email,
+                        &subscriber.email,
                         &body.title,
                         &body.content.html,
                         &body.content.text,
