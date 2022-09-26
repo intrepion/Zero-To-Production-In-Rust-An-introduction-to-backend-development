@@ -15,6 +15,27 @@
     },
     "query": "INSERT INTO subscriptions (id, email, name, subscribed_at, status)\nVALUES ($1, $2, $3, $4, 'pending_confirmation')"
   },
+  "3448c5c8785a9c6d408245c7fbc8414eb6aa7bc60b898824a60e10706ed701f1": {
+    "describe": {
+      "columns": [
+        {
+          "name": "user_id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Text"
+        ]
+      }
+    },
+    "query": "\n    SELECT user_id\n    FROM users\n    WHERE username = $1 AND password = $2\n    "
+  },
   "a71a1932b894572106460ca2e34a63dc0cb8c1ba7a70547add1cddbb68133c2b": {
     "describe": {
       "columns": [],
