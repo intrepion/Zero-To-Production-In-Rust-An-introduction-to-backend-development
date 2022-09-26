@@ -1,4 +1,7 @@
-use crate::{domain::SubscriberEmail, email_client::EmailClient, routes::error_chain_fmt};
+use crate::{
+    domain::SubscriberEmail, email_client::EmailClient, routes::error_chain_fmt,
+    telemetry::spawn_blocking_with_tracing,
+};
 use actix_web::{
     http::{
         header::{self, HeaderMap, HeaderValue},
@@ -197,7 +200,8 @@ async fn validate_credentials(
         .ok_or_else(|| PublishError::AuthError(anyhow::anyhow!("Unknown username.")))?;
     let expected_password_hash = PasswordHash::new(&expected_password_hash.expose_secret())
         .map_err(PublishError::UnexpectedError)?;
-    tokio::task::spawn_blocking(move || {
+    let current_span = tracing::Span::current();
+    spawn_blocking_with_tracing(move || {
         verify_password_hash(expected_password_hash, credentials.password)
     })
     .await
