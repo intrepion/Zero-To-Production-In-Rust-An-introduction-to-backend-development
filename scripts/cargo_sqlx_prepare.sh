@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-cargo sqlx prepare -- --bin zero2prod
+cargo sqlx prepare -- --lib
