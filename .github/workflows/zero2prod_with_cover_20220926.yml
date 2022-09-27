@@ -1,10 +1,10 @@
-name: zero2prod_with_cover_20220923
+name: zero2prod_with_cover_20220926
 
 on:
   push:
-    branches: [ "zero2prod_with_cover_20220923" ]
+    branches: [ "zero2prod_with_cover_20220926" ]
   pull_request:
-    branches: [ "zero2prod_with_cover_20220923" ]
+    branches: [ "zero2prod_with_cover_20220926" ]
 
 env:
   CARGO_TERM_COLOR: always
