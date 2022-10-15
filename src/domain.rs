@@ -8,6 +8,10 @@ pub struct NewSubscriber {
 pub struct SubscriberName(String);
 
 impl SubscriberName {
+    pub fn inner_ref(&self) -> &str {
+        &self.0
+    }
+
     pub fn parse(s: String) -> SubscriberName {
         let is_empty_or_whitespace = s.trim().is_empty();
 
