@@ -71,14 +71,14 @@ mod tests {
         Fake, Faker,
     };
     use secrecy::Secret;
-    use wiremock::{matchers::any, Mock, MockServer, ResponseTemplate};
+    use wiremock::{matchers::header_exists, Mock, MockServer, ResponseTemplate};
 
     #[tokio::test]
     async fn send_email_fires_a_request_to_base_url() {
         let mock_server = MockServer::start().await;
         let sender = SubscriberEmail::parse(SafeEmail().fake()).unwrap();
         let email_client = EmailClient::new(mock_server.uri(), sender, Secret::new(Faker.fake()));
-        Mock::given(any())
+        Mock::given(header_exists("X-Postmark-Server-Token"))
             .respond_with(ResponseTemplate::new(200))
             .expect(1)
             .mount(&mock_server)
