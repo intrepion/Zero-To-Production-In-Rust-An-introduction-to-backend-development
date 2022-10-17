@@ -36,6 +36,9 @@ impl std::fmt::Debug for PublishError {
 
 impl ResponseError for PublishError {
     fn status_code(&self) -> StatusCode {
+        // We just forward to the Display implementation of
+        // the wrapped String.
+
         match self {
             PublishError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
@@ -82,7 +85,7 @@ pub async fn publish_newsletter(
             Ok(subscriber) => {
                 email_client
                     .send_email(
-                        subscriber.email,
+                        &subscriber.email,
                         &body.title,
                         &body.content.html,
                         &body.content.text,
