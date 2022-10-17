@@ -1,8 +1,9 @@
-use crate::helpers::spawn_app;
 use wiremock::{
     matchers::{method, path},
     Mock, ResponseTemplate,
 };
+
+use crate::helpers::spawn_app;
 
 #[tokio::test]
 async fn clicking_on_the_confirmation_link_confirms_a_subscriber() {
