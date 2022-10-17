@@ -60,7 +60,7 @@
     },
     "query": "INSERT INTO subscription_tokens (subscription_token, subscriber_id)\n    VALUES ($1, $2)"
   },
-  "d13f1fc65c80ddaf76c471eea400090ea8c0b5b7266649aeb93e2e33793cd1aa": {
+  "d1fb3c51742d56cae7a82c6c3d186c2c1bc422f31f31c53a9280b87ee0474183": {
     "describe": {
       "columns": [
         {
@@ -84,7 +84,7 @@
         ]
       }
     },
-    "query": "\n    SELECT user_id, password_hash\n    FROM users\n    WHERE username = $1\n    "
+    "query": "\nSELECT user_id, password_hash\nFROM users\nWHERE username = $1\n"
   },
   "fba3a4d11694283559b61ddb2602286a6668c20ac568c62326e85d33551d4d21": {
     "describe": {
