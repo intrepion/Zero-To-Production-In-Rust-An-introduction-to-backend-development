@@ -20,6 +20,33 @@
     },
     "query": "\nSELECT username\nFROM users\nWHERE user_id = $1\n"
   },
+  "0b04d288bd0745730f072c42ca46ae7e0fa6737922f5afd822dd42c8881df735": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\nINSERT INTO issue_delivery_queue (\nnewsletter_issue_id,\nsubscriber_email\n)\nSELECT $1, email\nFROM subscriptions\nWHERE status = 'confirmed'\n"
+  },
+  "13787a1704a223e010de18185ea48498012c1221f15a43a65b5309b995297b0e": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Text",
+          "Text"
+        ]
+      }
+    },
+    "query": "\nINSERT INTO newsletter_issues (\nnewsletter_issue_id,\ntitle,\ntext_content,\nhtml_content,\npublished_at\n)\nVALUES ($1, $2, $3, $4, now())\n"
+  },
   "1b718b30fb1733ac09eef9d78455635e65da8e36cbe80443ebd20b1b6e6ed7b7": {
     "describe": {
       "columns": [],
@@ -129,6 +156,16 @@
       }
     },
     "query": "\nSELECT\n    response_status_code as \"response_status_code!\",\n    response_headers as \"response_headers!: Vec<HeaderPairRecord>\",\n    response_body as \"response_body!\"\nFROM idempotency\nWHERE\nuser_id = $1 AND\nidempotency_key = $2\n"
+  },
+  "68d9262c70393ce893643c23c6a7c1c5713fbc15b2844b2d3178a82d5120f0d2": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "SET TRANSACTION ISOLATION LEVEL repeatable read"
   },
   "7b57e2776a245ba1602f638121550485e2219a6ccaaa62b5ec3e4683e33a3b5f": {
     "describe": {
