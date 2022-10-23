@@ -1,11 +1,10 @@
-use actix_web::{http::header::ContentType, HttpResponse};
-use actix_web_flash_messages::IncomingFlashMessages;
-use std::fmt::Write;
-
 use crate::{
     session_state::TypedSession,
     utils::{e500, see_other},
 };
+use actix_web::{http::header::ContentType, HttpResponse};
+use actix_web_flash_messages::IncomingFlashMessages;
+use std::fmt::Write;
 
 pub async fn change_password_form(
     session: TypedSession,

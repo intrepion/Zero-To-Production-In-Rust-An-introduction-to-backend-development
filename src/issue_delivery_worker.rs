@@ -1,15 +1,13 @@
-use std::time::Duration;
-
-use sqlx::{PgPool, Postgres, Transaction};
-use tracing::{field::display, Span};
-use uuid::Uuid;
-
 use crate::{
     configuration::Settings, domain::SubscriberEmail, email_client::EmailClient,
     startup::get_connection_pool,
 };
+use sqlx::{PgPool, Postgres, Transaction};
+use std::time::Duration;
+use tracing::{field::display, Span};
+use uuid::Uuid;
 
-enum ExecutionOutcome {
+pub enum ExecutionOutcome {
     TaskCompleted,
     EmptyQueue,
 }
@@ -32,8 +30,8 @@ async fn delete_task(
         r#"
 DELETE FROM issue_delivery_queue
 WHERE
-newsletter_issue_id = $1 AND
-subscriber_email = $2
+    newsletter_issue_id = $1 AND
+    subscriber_email = $2
 "#,
         issue_id,
         email
@@ -79,7 +77,7 @@ async fn get_issue(pool: &PgPool, issue_id: Uuid) -> Result<NewsletterIssue, any
 SELECT title, text_content, html_content
 FROM newsletter_issues
 WHERE
-newsletter_issue_id = $1
+    newsletter_issue_id = $1
 "#,
         issue_id
     )
@@ -91,17 +89,7 @@ newsletter_issue_id = $1
 pub async fn run_worker_until_stopped(configuration: Settings) -> Result<(), anyhow::Error> {
     let connection_pool = get_connection_pool(&configuration.database);
 
-    let sender_email = configuration
-        .email_client
-        .sender()
-        .expect("Invalid sender email address.");
-    let timeout = configuration.email_client.timeout();
-    let email_client = EmailClient::new(
-        configuration.email_client.base_url,
-        sender_email,
-        configuration.email_client.authorization_token,
-        timeout,
-    );
+    let email_client = configuration.email_client.client();
     worker_loop(connection_pool, email_client).await
 }
 
@@ -113,7 +101,7 @@ pub async fn run_worker_until_stopped(configuration: Settings) -> Result<(), any
     ),
     err
     )]
-async fn try_execute_task(
+pub async fn try_execute_task(
     pool: &PgPool,
     email_client: &EmailClient,
 ) -> Result<ExecutionOutcome, anyhow::Error> {

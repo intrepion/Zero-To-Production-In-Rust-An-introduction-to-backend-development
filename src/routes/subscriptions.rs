@@ -1,15 +1,14 @@
+use crate::{
+    domain::{NewSubscriber, SubscriberEmail, SubscriberName},
+    email_client::EmailClient,
+    startup::ApplicationBaseUrl,
+};
 use actix_web::{http::StatusCode, web, HttpResponse, ResponseError};
 use anyhow::Context;
 use chrono::Utc;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
-
-use crate::{
-    domain::{NewSubscriber, SubscriberEmail, SubscriberName},
-    email_client::EmailClient,
-    startup::ApplicationBaseUrl,
-};
 
 #[derive(serde::Deserialize)]
 pub struct FormData {
@@ -104,8 +103,10 @@ pub async fn insert_subscriber(
 ) -> Result<Uuid, sqlx::Error> {
     let subscriber_id = Uuid::new_v4();
     sqlx::query!(
-        r#"INSERT INTO subscriptions (id, email, name, subscribed_at, status)
-        VALUES ($1, $2, $3, $4, 'pending_confirmation')"#,
+        r#"
+INSERT INTO subscriptions (id, email, name, subscribed_at, status)
+VALUES ($1, $2, $3, $4, 'pending_confirmation')
+"#,
         subscriber_id,
         new_subscriber.email.as_ref(),
         new_subscriber.name.as_ref(),
@@ -160,8 +161,10 @@ pub async fn store_token(
     subscription_token: &str,
 ) -> Result<(), StoreTokenError> {
     sqlx::query!(
-        r#"INSERT INTO subscription_tokens (subscription_token, subscriber_id)
-    VALUES ($1, $2)"#,
+        r#"
+INSERT INTO subscription_tokens (subscription_token, subscriber_id)
+VALUES ($1, $2)
+"#,
         subscription_token,
         subscriber_id
     )

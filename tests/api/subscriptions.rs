@@ -1,9 +1,8 @@
+use crate::helpers::spawn_app;
 use wiremock::{
     matchers::{method, path},
     Mock, ResponseTemplate,
 };
-
-use crate::helpers::spawn_app;
 
 #[tokio::test]
 async fn subscribe_fails_if_there_is_a_fatal_database_error() {

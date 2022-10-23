@@ -1,3 +1,4 @@
+use crate::telemetry::spawn_blocking_with_tracing;
 use anyhow::Context;
 use argon2::{
     password_hash::SaltString, Algorithm, Argon2, Params, PasswordHash, PasswordHasher,
@@ -5,8 +6,6 @@ use argon2::{
 };
 use secrecy::{ExposeSecret, Secret};
 use sqlx::PgPool;
-
-use crate::telemetry::spawn_blocking_with_tracing;
 
 #[derive(thiserror::Error, Debug)]
 pub enum AuthError {

@@ -43,9 +43,9 @@ mod tests {
     }
 
     #[test]
-    fn whitespace_only_names_are_rejected() {
-        let name = " ".to_string();
-        assert_err!(SubscriberName::parse(name));
+    fn a_valid_name_is_parsed_successfully() {
+        let name = "Ursula Le Guin".to_string();
+        assert_ok!(SubscriberName::parse(name));
     }
 
     #[test]
@@ -63,8 +63,8 @@ mod tests {
     }
 
     #[test]
-    fn a_valid_name_is_parsed_successfully() {
-        let name = "Ursula Le Guin".to_string();
-        assert_ok!(SubscriberName::parse(name));
+    fn whitespace_only_names_are_rejected() {
+        let name = " ".to_string();
+        assert_err!(SubscriberName::parse(name));
     }
 }

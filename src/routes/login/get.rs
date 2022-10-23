@@ -27,11 +27,11 @@ pub async fn login_form(flash_messages: IncomingFlashMessages) -> HttpResponse {
                 >
             </label>
             <label>Password
-            <input
-                type="password"
-                placeholder="Enter Password"
-                name="password"
-            >
+                <input
+                    type="password"
+                    placeholder="Enter Password"
+                    name="password"
+                >
             </label>
             <button type="submit">Login</button>
         </form>

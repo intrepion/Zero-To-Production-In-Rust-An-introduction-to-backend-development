@@ -1,7 +1,6 @@
+use crate::domain::SubscriberEmail;
 use reqwest::Client;
 use secrecy::{ExposeSecret, Secret};
-
-use crate::domain::SubscriberEmail;
 
 pub struct EmailClient {
     http_client: Client,
@@ -97,10 +96,6 @@ mod tests {
                 false
             }
         }
-    }
-
-    fn subject() -> String {
-        Sentence(1..2).fake()
     }
 
     fn content() -> String {
@@ -213,5 +208,9 @@ mod tests {
             .await;
 
         assert_err!(outcome);
+    }
+
+    fn subject() -> String {
+        Sentence(1..2).fake()
     }
 }

@@ -1,5 +1,17 @@
 {
   "db": "PostgreSQL",
+  "02f6d5da5f990b0619e5e46928c1538edca7272c8372159119b3b36719b93468": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\nINSERT INTO issue_delivery_queue (\n    newsletter_issue_id,\n    subscriber_email\n)\nSELECT $1, email\nFROM subscriptions\nWHERE status = 'confirmed'\n"
+  },
   "0564db5971613829c94c4711204938c3172422560cb28fbad7a40d992760be7e": {
     "describe": {
       "columns": [
@@ -19,65 +31,6 @@
       }
     },
     "query": "\nSELECT username\nFROM users\nWHERE user_id = $1\n"
-  },
-  "0b04d288bd0745730f072c42ca46ae7e0fa6737922f5afd822dd42c8881df735": {
-    "describe": {
-      "columns": [],
-      "nullable": [],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      }
-    },
-    "query": "\nINSERT INTO issue_delivery_queue (\nnewsletter_issue_id,\nsubscriber_email\n)\nSELECT $1, email\nFROM subscriptions\nWHERE status = 'confirmed'\n"
-  },
-  "13787a1704a223e010de18185ea48498012c1221f15a43a65b5309b995297b0e": {
-    "describe": {
-      "columns": [],
-      "nullable": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Text",
-          "Text",
-          "Text"
-        ]
-      }
-    },
-    "query": "\nINSERT INTO newsletter_issues (\nnewsletter_issue_id,\ntitle,\ntext_content,\nhtml_content,\npublished_at\n)\nVALUES ($1, $2, $3, $4, now())\n"
-  },
-  "13e7a2b2ba74e95ba9a406a90b9c163f59490a629957b60fa888af276f6d5a78": {
-    "describe": {
-      "columns": [
-        {
-          "name": "title",
-          "ordinal": 0,
-          "type_info": "Text"
-        },
-        {
-          "name": "text_content",
-          "ordinal": 1,
-          "type_info": "Text"
-        },
-        {
-          "name": "html_content",
-          "ordinal": 2,
-          "type_info": "Text"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      }
-    },
-    "query": "\nSELECT title, text_content, html_content\nFROM newsletter_issues\nWHERE\nnewsletter_issue_id = $1\n"
   },
   "1b718b30fb1733ac09eef9d78455635e65da8e36cbe80443ebd20b1b6e6ed7b7": {
     "describe": {
@@ -118,22 +71,7 @@
     },
     "query": "\n        UPDATE idempotency\n        SET\n        response_status_code = $3,\n        response_headers = $4,\n        response_body = $5\n        WHERE\n        user_id = $1 AND\n        idempotency_key = $2\n        "
   },
-  "2c0785c56cbdbc0b11c09b694b1896d5d746f7e195155eba56498be6673cf345": {
-    "describe": {
-      "columns": [],
-      "nullable": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Text",
-          "Text",
-          "Timestamptz"
-        ]
-      }
-    },
-    "query": "INSERT INTO subscriptions (id, email, name, subscribed_at, status)\n        VALUES ($1, $2, $3, $4, 'pending_confirmation')"
-  },
-  "4d20e8788363c380cb3c1dea3cdd8ef18972ceaaf9aecc03fe7c3a11f088d459": {
+  "38e294281c040ea7b570ac21616ae8b207db3b4bb31e31f5ea7440208688d63f": {
     "describe": {
       "columns": [
         {
@@ -187,9 +125,9 @@
         ]
       }
     },
-    "query": "\nSELECT\n    response_status_code as \"response_status_code!\",\n    response_headers as \"response_headers!: Vec<HeaderPairRecord>\",\n    response_body as \"response_body!\"\nFROM idempotency\nWHERE\nuser_id = $1 AND\nidempotency_key = $2\n"
+    "query": "\nSELECT\n    response_status_code as \"response_status_code!\",\n    response_headers as \"response_headers!: Vec<HeaderPairRecord>\",\n    response_body as \"response_body!\"\nFROM idempotency\nWHERE\n    user_id = $1 AND\n    idempotency_key = $2\n"
   },
-  "60fc43e679fa87b18406d91d178b4528792877994c84a7fe182e9d7584fbfd15": {
+  "51fc3b1a3997c7d765d0649e56a7d4cc9be5ce0fd301fad1c8dbe511c6f945d7": {
     "describe": {
       "columns": [],
       "nullable": [],
@@ -200,7 +138,7 @@
         ]
       }
     },
-    "query": "\nDELETE FROM issue_delivery_queue\nWHERE\nnewsletter_issue_id = $1 AND\nsubscriber_email = $2\n"
+    "query": "\nDELETE FROM issue_delivery_queue\nWHERE\n    newsletter_issue_id = $1 AND\n    subscriber_email = $2\n"
   },
   "68d9262c70393ce893643c23c6a7c1c5713fbc15b2844b2d3178a82d5120f0d2": {
     "describe": {
@@ -211,6 +149,34 @@
       }
     },
     "query": "SET TRANSACTION ISOLATION LEVEL repeatable read"
+  },
+  "6bcc794eb579defe3353c394beeb4514c71b66e807d55e7c9cbc35666232c50c": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Text",
+          "Timestamptz"
+        ]
+      }
+    },
+    "query": "\nINSERT INTO subscriptions (id, email, name, subscribed_at, status)\nVALUES ($1, $2, $3, $4, 'pending_confirmation')\n"
+  },
+  "6e2d3354b43f751489c55f8a6a5d48067848a1b5e13d0ff71bc15e0a8974c263": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\nINSERT INTO subscription_tokens (subscription_token, subscriber_id)\nVALUES ($1, $2)\n"
   },
   "76a4068cab536408611c6d2506e7ac5e2b574c93821e2680405fe8a3b8609121": {
     "describe": {
@@ -235,24 +201,6 @@
       }
     },
     "query": "\nSELECT newsletter_issue_id, subscriber_email\nFROM issue_delivery_queue\nFOR UPDATE\nSKIP LOCKED\nLIMIT 1\n"
-  },
-  "7b57e2776a245ba1602f638121550485e2219a6ccaaa62b5ec3e4683e33a3b5f": {
-    "describe": {
-      "columns": [
-        {
-          "name": "email",
-          "ordinal": 0,
-          "type_info": "Text"
-        }
-      ],
-      "nullable": [
-        false
-      ],
-      "parameters": {
-        "Left": []
-      }
-    },
-    "query": "\n        SELECT email\n        FROM subscriptions\n        WHERE status = 'confirmed'\n        "
   },
   "a71a1932b894572106460ca2e34a63dc0cb8c1ba7a70547add1cddbb68133c2b": {
     "describe": {
@@ -286,18 +234,37 @@
     },
     "query": "SELECT subscriber_id FROM subscription_tokens WHERE subscription_token = $1"
   },
-  "d049bc0c7acd702056de373921ae1cb9c8f51dbf7024d61a5ea5ad20672f6c60": {
+  "ad15f98eb86ccf4b5d0493aa30907e0a6c9e14fffd60ff7a5825f61c2c10d7f8": {
     "describe": {
-      "columns": [],
-      "nullable": [],
+      "columns": [
+        {
+          "name": "title",
+          "ordinal": 0,
+          "type_info": "Text"
+        },
+        {
+          "name": "text_content",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "html_content",
+          "ordinal": 2,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
       "parameters": {
         "Left": [
-          "Text",
           "Uuid"
         ]
       }
     },
-    "query": "INSERT INTO subscription_tokens (subscription_token, subscriber_id)\n    VALUES ($1, $2)"
+    "query": "\nSELECT title, text_content, html_content\nFROM newsletter_issues\nWHERE\n    newsletter_issue_id = $1\n"
   },
   "d1fb3c51742d56cae7a82c6c3d186c2c1bc422f31f31c53a9280b87ee0474183": {
     "describe": {
@@ -338,6 +305,24 @@
     },
     "query": "\nUPDATE users\nSET password_hash = $1\nWHERE user_id = $2\n"
   },
+  "e5550a9aee746bdf50022375fec002b53598b47adab5c98941b958126f985350": {
+    "describe": {
+      "columns": [
+        {
+          "name": "email",
+          "ordinal": 0,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\nSELECT email\nFROM subscriptions\nWHERE status = 'confirmed'\n"
+  },
   "f196db8b81c57841063ea38d9c029f0eabf2afd42e91a2fada8e81e12b3f119a": {
     "describe": {
       "columns": [],
@@ -350,5 +335,20 @@
       }
     },
     "query": "\n    INSERT INTO idempotency (\n    user_id,\n    idempotency_key,\n    created_at\n    )\n    VALUES ($1, $2, now())\n    ON CONFLICT DO NOTHING\n    "
+  },
+  "fdf9375da3895651603a91f7d97965ea14922a900ddd358b33f285e15bc84191": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Text",
+          "Text"
+        ]
+      }
+    },
+    "query": "\nINSERT INTO newsletter_issues (\n    newsletter_issue_id,\n    title,\n    text_content,\n    html_content,\n    published_at\n)\nVALUES ($1, $2, $3, $4, now())\n"
   }
 }

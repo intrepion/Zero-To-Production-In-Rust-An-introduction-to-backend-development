@@ -35,8 +35,8 @@ SELECT
     response_body as "response_body!"
 FROM idempotency
 WHERE
-user_id = $1 AND
-idempotency_key = $2
+    user_id = $1 AND
+    idempotency_key = $2
 "#,
         user_id,
         idempotency_key.as_ref()

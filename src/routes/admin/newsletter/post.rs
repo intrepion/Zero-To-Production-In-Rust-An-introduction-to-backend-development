@@ -1,7 +1,9 @@
-use crate::authentication::UserId;
-use crate::domain::SubscriberEmail;
-use crate::idempotency::{save_response, try_processing, IdempotencyKey, NextAction};
-use crate::utils::{e400, e500, see_other};
+use crate::{
+    authentication::UserId,
+    domain::SubscriberEmail,
+    idempotency::{save_response, try_processing, IdempotencyKey, NextAction},
+    utils::{e400, e500, see_other},
+};
 use actix_web::{web, HttpResponse};
 use actix_web_flash_messages::FlashMessage;
 use anyhow::Context;
@@ -28,8 +30,8 @@ async fn enqueue_delivery_tasks(
     sqlx::query!(
         r#"
 INSERT INTO issue_delivery_queue (
-newsletter_issue_id,
-subscriber_email
+    newsletter_issue_id,
+    subscriber_email
 )
 SELECT $1, email
 FROM subscriptions
@@ -48,10 +50,10 @@ async fn get_confirmed_subscribers(
 ) -> Result<Vec<Result<ConfirmedSubscriber, anyhow::Error>>, anyhow::Error> {
     let confirmed_subscribers = sqlx::query!(
         r#"
-        SELECT email
-        FROM subscriptions
-        WHERE status = 'confirmed'
-        "#,
+SELECT email
+FROM subscriptions
+WHERE status = 'confirmed'
+"#,
     )
     .fetch_all(pool)
     .await?
@@ -75,11 +77,11 @@ async fn insert_newsletter_issue(
     sqlx::query!(
         r#"
 INSERT INTO newsletter_issues (
-newsletter_issue_id,
-title,
-text_content,
-html_content,
-published_at
+    newsletter_issue_id,
+    title,
+    text_content,
+    html_content,
+    published_at
 )
 VALUES ($1, $2, $3, $4, now())
 "#,
