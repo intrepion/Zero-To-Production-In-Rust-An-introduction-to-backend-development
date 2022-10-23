@@ -53,6 +53,62 @@
     },
     "query": "\n        SELECT email\n        FROM subscriptions\n        WHERE status = 'confirmed'\n        "
   },
+  "a296a624164272a52323c0925b0d112fed40374aca0fa2f2c1575506100b85b1": {
+    "describe": {
+      "columns": [
+        {
+          "name": "response_status_code",
+          "ordinal": 0,
+          "type_info": "Int2"
+        },
+        {
+          "name": "response_headers: Vec<HeaderPairRecord>",
+          "ordinal": 1,
+          "type_info": {
+            "Custom": {
+              "kind": {
+                "Array": {
+                  "Custom": {
+                    "kind": {
+                      "Composite": [
+                        [
+                          "name",
+                          "Text"
+                        ],
+                        [
+                          "value",
+                          "Bytea"
+                        ]
+                      ]
+                    },
+                    "name": "header_pair"
+                  }
+                }
+              },
+              "name": "_header_pair"
+            }
+          }
+        },
+        {
+          "name": "response_body",
+          "ordinal": 2,
+          "type_info": "Bytea"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text"
+        ]
+      }
+    },
+    "query": "\nSELECT\n    response_status_code,\n    response_headers as \"response_headers: Vec<HeaderPairRecord>\",\n    response_body\nFROM idempotency\nWHERE\nuser_id = $1 AND\nidempotency_key = $2\n"
+  },
   "a71a1932b894572106460ca2e34a63dc0cb8c1ba7a70547add1cddbb68133c2b": {
     "describe": {
       "columns": [],
