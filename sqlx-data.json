@@ -53,6 +53,45 @@
     },
     "query": "\n        SELECT email\n        FROM subscriptions\n        WHERE status = 'confirmed'\n        "
   },
+  "8549fa2a8655b521f248ba498bb6c9241c46490a21ffcf32f081be838cb08e68": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Int2",
+          {
+            "Custom": {
+              "kind": {
+                "Array": {
+                  "Custom": {
+                    "kind": {
+                      "Composite": [
+                        [
+                          "name",
+                          "Text"
+                        ],
+                        [
+                          "value",
+                          "Bytea"
+                        ]
+                      ]
+                    },
+                    "name": "header_pair"
+                  }
+                }
+              },
+              "name": "_header_pair"
+            }
+          },
+          "Bytea"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO idempotency (\n        user_id,\n        idempotency_key,\n        response_status_code,\n        response_headers,\n        response_body,\n        created_at\n        )\n        VALUES ($1, $2, $3, $4, $5, now())\n        "
+  },
   "a296a624164272a52323c0925b0d112fed40374aca0fa2f2c1575506100b85b1": {
     "describe": {
       "columns": [
