@@ -31,10 +31,10 @@ pub async fn change_password(
         .context("Failed to hash password")?;
     sqlx::query!(
         r#"
-UPDATE users
-SET password_hash = $1
-WHERE user_id = $2
-"#,
+        UPDATE users
+        SET password_hash = $1
+        WHERE user_id = $2
+        "#,
         password_hash.expose_secret(),
         user_id
     )
@@ -63,15 +63,15 @@ async fn get_stored_credentials(
 ) -> Result<Option<(uuid::Uuid, Secret<String>)>, anyhow::Error> {
     let row = sqlx::query!(
         r#"
-SELECT user_id, password_hash
-FROM users
-WHERE username = $1
-"#,
+        SELECT user_id, password_hash
+        FROM users
+        WHERE username = $1
+        "#,
         username,
     )
     .fetch_optional(pool)
     .await
-    .context("Failed to perform a query to retrieve stored credentials.")?
+    .context("Failed to performed a query to retrieve stored credentials.")?
     .map(|row| (row.user_id, Secret::new(row.password_hash)));
     Ok(row)
 }
@@ -84,8 +84,8 @@ pub async fn validate_credentials(
     let mut user_id = None;
     let mut expected_password_hash = Secret::new(
         "$argon2id$v=19$m=15000,t=2,p=1$\
-gZiV/M1gPc22ElAH/Jh1Hw$\
-CWOrkoo7oJBQ/iyh7uJ0LO2aLEfrHwTWllSAxT0zRno"
+        gZiV/M1gPc22ElAH/Jh1Hw$\
+        CWOrkoo7oJBQ/iyh7uJ0LO2aLEfrHwTWllSAxT0zRno"
             .to_string(),
     );
 
@@ -108,7 +108,7 @@ CWOrkoo7oJBQ/iyh7uJ0LO2aLEfrHwTWllSAxT0zRno"
 }
 
 #[tracing::instrument(
-    name = "Verify password hash",
+    name = "Validate credentials",
     skip(expected_password_hash, password_candidate)
 )]
 fn verify_password_hash(

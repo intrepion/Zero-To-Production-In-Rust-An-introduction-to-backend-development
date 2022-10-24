@@ -49,12 +49,12 @@ async fn dequeue_task(
     let mut transaction = pool.begin().await?;
     let r = sqlx::query!(
         r#"
-SELECT newsletter_issue_id, subscriber_email
-FROM issue_delivery_queue
-FOR UPDATE
-SKIP LOCKED
-LIMIT 1
-"#,
+            SELECT newsletter_issue_id, subscriber_email
+            FROM issue_delivery_queue
+            FOR UPDATE
+            SKIP LOCKED
+            LIMIT 1
+            "#,
     )
     .fetch_optional(&mut transaction)
     .await?;
@@ -88,7 +88,6 @@ WHERE
 
 pub async fn run_worker_until_stopped(configuration: Settings) -> Result<(), anyhow::Error> {
     let connection_pool = get_connection_pool(&configuration.database);
-
     let email_client = configuration.email_client.client();
     worker_loop(connection_pool, email_client).await
 }
@@ -96,11 +95,11 @@ pub async fn run_worker_until_stopped(configuration: Settings) -> Result<(), any
 #[tracing::instrument(
     skip_all,
     fields(
-    newsletter_issue_id=tracing::field::Empty,
-    subscriber_email=tracing::field::Empty
+        newsletter_issue_id=tracing::field::Empty,
+        subscriber_email=tracing::field::Empty
     ),
     err
-    )]
+)]
 pub async fn try_execute_task(
     pool: &PgPool,
     email_client: &EmailClient,
@@ -113,7 +112,6 @@ pub async fn try_execute_task(
     Span::current()
         .record("newsletter_issue_id", &display(issue_id))
         .record("subscriber_email", &display(&email));
-
     match SubscriberEmail::parse(email.clone()) {
         Ok(email) => {
             let issue = get_issue(pool, issue_id).await?;
@@ -127,19 +125,19 @@ pub async fn try_execute_task(
                 .await
             {
                 tracing::error!(
-                error.cause_chain = ?e,
-                error.message = %e,
-                "Failed to deliver issue to a confirmed subscriber. \
-                Skipping.",
+                    error.cause_chain = ?e,
+                    error.message = %e,
+                    "Failed to deliver issue to a confirmed subscriber. \
+                        Skipping.",
                 );
             }
         }
         Err(e) => {
             tracing::error!(
-            error.cause_chain = ?e,
-            error.message = %e,
-            "Skipping a confirmed subscriber. \
-            Their stored contact details are invalid",
+                error.cause_chain = ?e,
+                error.message = %e,
+                "Skipping a confirmed subscriber. \
+                    Their stored contact details are invalid",
             );
         }
     }

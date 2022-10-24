@@ -134,26 +134,6 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn send_email_fires_a_request_to_base_url() {
-        let mock_server = MockServer::start().await;
-        let email_client = email_client(mock_server.uri());
-
-        Mock::given(header_exists("X-Postmark-Server-Token"))
-            .and(header("Content-Type", "application/json"))
-            .and(path("/email"))
-            .and(method("POST"))
-            .and(SendEmailBodyMatcher)
-            .respond_with(ResponseTemplate::new(200))
-            .expect(1)
-            .mount(&mock_server)
-            .await;
-
-        let _ = email_client
-            .send_email(&email(), &subject(), &content(), &content())
-            .await;
-    }
-
-    #[tokio::test]
     async fn send_email_sends_the_expected_request() {
         let mock_server = MockServer::start().await;
         let email_client = email_client(mock_server.uri());

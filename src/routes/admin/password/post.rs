@@ -21,7 +21,6 @@ pub async fn change_password(
     user_id: web::ReqData<UserId>,
 ) -> Result<HttpResponse, actix_web::Error> {
     let user_id = user_id.into_inner();
-
     if form.new_password.expose_secret() != form.new_password_check.expose_secret() {
         FlashMessage::error(
             "You entered two different new passwords - the field values must match.",
@@ -29,9 +28,7 @@ pub async fn change_password(
         .send();
         return Ok(see_other("/admin/password"));
     }
-
     let username = get_username(*user_id, &pool).await.map_err(e500)?;
-
     let credentials = Credentials {
         username,
         password: form.0.current_password,

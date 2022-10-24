@@ -18,8 +18,8 @@ async fn main() -> anyhow::Result<()> {
     let worker_task = tokio::spawn(run_worker_until_stopped(configuration));
 
     tokio::select! {
-    o = application_task => report_exit("API", o),
-    o = worker_task => report_exit("Background worker", o),
+        o = application_task => report_exit("API", o),
+        o = worker_task =>  report_exit("Background worker", o),
     };
 
     Ok(())
@@ -32,18 +32,18 @@ fn report_exit(task_name: &str, outcome: Result<Result<(), impl Debug + Display>
         }
         Ok(Err(e)) => {
             tracing::error!(
-            error.cause_chain = ?e,
-            error.message = %e,
-            "{} failed",
-            task_name
+                error.cause_chain = ?e,
+                error.message = %e,
+                "{} failed",
+                task_name
             )
         }
         Err(e) => {
             tracing::error!(
-            error.cause_chain = ?e,
-            error.message = %e,
-            "{}' task failed to complete",
-            task_name
+                error.cause_chain = ?e,
+                error.message = %e,
+                "{}' task failed to complete",
+                task_name
             )
         }
     }

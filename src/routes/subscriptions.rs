@@ -8,6 +8,7 @@ use anyhow::Context;
 use chrono::Utc;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use sqlx::{PgPool, Postgres, Transaction};
+use std::convert::{TryFrom, TryInto};
 use uuid::Uuid;
 
 #[derive(serde::Deserialize)]
@@ -18,6 +19,7 @@ pub struct FormData {
 
 impl TryFrom<FormData> for NewSubscriber {
     type Error = String;
+
     fn try_from(value: FormData) -> Result<Self, Self::Error> {
         let name = SubscriberName::parse(value.name)?;
         let email = SubscriberEmail::parse(value.email)?;
@@ -43,8 +45,7 @@ impl std::fmt::Display for StoreTokenError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "A database error was encountered while \
-trying to store a subscription token."
+            "A database failure was encountered while trying to store a subscription token."
         )
     }
 }
@@ -117,12 +118,6 @@ VALUES ($1, $2, $3, $4, 'pending_confirmation')
     Ok(subscriber_id)
 }
 
-pub fn parse_subscriber(form: FormData) -> Result<NewSubscriber, String> {
-    let name = SubscriberName::parse(form.name)?;
-    let email = SubscriberEmail::parse(form.email)?;
-    Ok(NewSubscriber { email, name })
-}
-
 #[tracing::instrument(
     name = "Send a confirmation email to a new subscriber",
     skip(email_client, new_subscriber, base_url, subscription_token)
@@ -142,8 +137,7 @@ pub async fn send_confirmation_email(
         confirmation_link
     );
     let html_body = format!(
-        "Welcome to our newsletter!<br />\
-    Click <a href=\"{}\">here</a> to confirm your subscription.",
+        "Welcome to our newsletter!<br />Click <a href=\"{}\">here</a> to confirm your subscription.",
         confirmation_link
     );
     email_client

@@ -13,12 +13,10 @@ pub async fn change_password_form(
     if session.get_user_id().map_err(e500)?.is_none() {
         return Ok(see_other("/login"));
     };
-
     let mut msg_html = String::new();
     for m in flash_messages.iter() {
         writeln!(msg_html, "<p><i>{}</i></p>", m.content()).unwrap();
     }
-
     Ok(HttpResponse::Ok()
         .content_type(ContentType::html())
         .body(format!(
@@ -48,11 +46,11 @@ pub async fn change_password_form(
             </label>
             <br>
             <label>Confirm new password
-            <input
-                type="password"
-                placeholder="Type the new password again"
-                name="new_password_check"
-            >
+                <input
+                    type="password"
+                    placeholder="Type the new password again"
+                    name="new_password_check"
+                >
             </label>
             <br>
             <button type="submit">Change password</button>

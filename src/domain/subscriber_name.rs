@@ -11,6 +11,7 @@ impl SubscriberName {
 
         let forbidden_characters = ['/', '(', ')', '"', '<', '>', '\\', '{', '}'];
         let contains_forbidden_characters = s.chars().any(|g| forbidden_characters.contains(&g));
+
         if is_empty_or_whitespace || is_too_long || contains_forbidden_characters {
             Err(format!("{} is not a valid subscriber name.", s))
         } else {
@@ -32,7 +33,7 @@ mod tests {
 
     #[test]
     fn a_256_grapheme_long_name_is_valid() {
-        let name = "ё".repeat(256);
+        let name = "a̐".repeat(256);
         assert_ok!(SubscriberName::parse(name));
     }
 

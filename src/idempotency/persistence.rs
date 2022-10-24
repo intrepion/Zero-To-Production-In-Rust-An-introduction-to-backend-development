@@ -29,12 +29,12 @@ pub async fn get_saved_response(
 ) -> Result<Option<HttpResponse>, anyhow::Error> {
     let saved_response = sqlx::query!(
         r#"
-SELECT
-    response_status_code as "response_status_code!",
+SELECT 
+    response_status_code as "response_status_code!", 
     response_headers as "response_headers!: Vec<HeaderPairRecord>",
     response_body as "response_body!"
 FROM idempotency
-WHERE
+WHERE 
     user_id = $1 AND
     idempotency_key = $2
 "#,
@@ -62,7 +62,6 @@ pub async fn save_response(
     http_response: HttpResponse,
 ) -> Result<HttpResponse, anyhow::Error> {
     let (response_head, body) = http_response.into_parts();
-
     let body = to_bytes(body).await.map_err(|e| anyhow::anyhow!("{}", e))?;
     let status_code = response_head.status().as_u16() as i16;
     let headers = {
@@ -74,18 +73,17 @@ pub async fn save_response(
         }
         h
     };
-
     sqlx::query_unchecked!(
         r#"
-        UPDATE idempotency
-        SET
-        response_status_code = $3,
-        response_headers = $4,
-        response_body = $5
-        WHERE
-        user_id = $1 AND
-        idempotency_key = $2
-        "#,
+UPDATE idempotency
+SET 
+    response_status_code = $3, 
+    response_headers = $4,
+    response_body = $5
+WHERE
+    user_id = $1 AND
+    idempotency_key = $2
+"#,
         user_id,
         idempotency_key.as_ref(),
         status_code,
@@ -106,19 +104,16 @@ pub async fn try_processing(
     user_id: Uuid,
 ) -> Result<NextAction, anyhow::Error> {
     let mut transaction = pool.begin().await?;
-    sqlx::query!("SET TRANSACTION ISOLATION LEVEL repeatable read")
-        .execute(&mut transaction)
-        .await?;
     let n_inserted_rows = sqlx::query!(
         r#"
-    INSERT INTO idempotency (
-    user_id,
+INSERT INTO idempotency (
+    user_id, 
     idempotency_key,
     created_at
-    )
-    VALUES ($1, $2, now())
-    ON CONFLICT DO NOTHING
-    "#,
+) 
+VALUES ($1, $2, now()) 
+ON CONFLICT DO NOTHING
+"#,
         user_id,
         idempotency_key.as_ref()
     )

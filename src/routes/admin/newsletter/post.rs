@@ -1,6 +1,5 @@
 use crate::{
     authentication::UserId,
-    domain::SubscriberEmail,
     idempotency::{save_response, try_processing, IdempotencyKey, NextAction},
     utils::{e400, e500, see_other},
 };
@@ -9,10 +8,6 @@ use actix_web_flash_messages::FlashMessage;
 use anyhow::Context;
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
-
-struct ConfirmedSubscriber {
-    email: SubscriberEmail,
-}
 
 #[derive(serde::Deserialize)]
 pub struct FormData {
@@ -30,7 +25,7 @@ async fn enqueue_delivery_tasks(
     sqlx::query!(
         r#"
 INSERT INTO issue_delivery_queue (
-    newsletter_issue_id,
+    newsletter_issue_id, 
     subscriber_email
 )
 SELECT $1, email
@@ -44,28 +39,6 @@ WHERE status = 'confirmed'
     Ok(())
 }
 
-#[tracing::instrument(name = "Get confirmed subscribers", skip(pool))]
-async fn get_confirmed_subscribers(
-    pool: &PgPool,
-) -> Result<Vec<Result<ConfirmedSubscriber, anyhow::Error>>, anyhow::Error> {
-    let confirmed_subscribers = sqlx::query!(
-        r#"
-SELECT email
-FROM subscriptions
-WHERE status = 'confirmed'
-"#,
-    )
-    .fetch_all(pool)
-    .await?
-    .into_iter()
-    .map(|r| match SubscriberEmail::parse(r.email) {
-        Ok(email) => Ok(ConfirmedSubscriber { email }),
-        Err(error) => Err(anyhow::anyhow!(error)),
-    })
-    .collect();
-    Ok(confirmed_subscribers)
-}
-
 #[tracing::instrument(skip_all)]
 async fn insert_newsletter_issue(
     transaction: &mut Transaction<'_, Postgres>,
@@ -77,9 +50,9 @@ async fn insert_newsletter_issue(
     sqlx::query!(
         r#"
 INSERT INTO newsletter_issues (
-    newsletter_issue_id,
-    title,
-    text_content,
+    newsletter_issue_id, 
+    title, 
+    text_content, 
     html_content,
     published_at
 )
@@ -142,6 +115,6 @@ pub async fn publish_newsletter(
 fn success_message() -> FlashMessage {
     FlashMessage::info(
         "The newsletter issue has been accepted - \
-    emails will go out shortly.",
+        emails will go out shortly.",
     )
 }

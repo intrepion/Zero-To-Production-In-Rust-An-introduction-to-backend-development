@@ -1,10 +1,11 @@
 use crate::{domain::SubscriberEmail, email_client::EmailClient};
 use secrecy::{ExposeSecret, Secret};
-use serde_aux::prelude::deserialize_number_from_string;
+use serde_aux::field_attributes::deserialize_number_from_string;
 use sqlx::{
     postgres::{PgConnectOptions, PgSslMode},
     ConnectOptions,
 };
+use std::convert::{TryFrom, TryInto};
 
 #[derive(serde::Deserialize, Clone)]
 pub struct ApplicationSettings {
@@ -53,6 +54,7 @@ pub struct EmailClientSettings {
     pub base_url: String,
     pub sender_email: String,
     pub authorization_token: Secret<String>,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
     pub timeout_milliseconds: u64,
 }
 
@@ -93,13 +95,13 @@ impl Environment {
 
 impl TryFrom<String> for Environment {
     type Error = String;
+
     fn try_from(s: String) -> Result<Self, Self::Error> {
         match s.to_lowercase().as_str() {
             "local" => Ok(Self::Local),
             "production" => Ok(Self::Production),
             other => Err(format!(
-                "{} is not a supported environment. \
-    Use either `local` or `production`.",
+                "{} is not a supported environment. Use either `local` or `production`.",
                 other
             )),
         }

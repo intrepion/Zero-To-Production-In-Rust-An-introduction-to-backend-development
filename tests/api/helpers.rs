@@ -14,7 +14,6 @@ use zero2prod::{
 static TRACING: Lazy<()> = Lazy::new(|| {
     let default_filter_level = "info".to_string();
     let subscriber_name = "test".to_string();
-
     if std::env::var("TEST_LOG").is_ok() {
         let subscriber = get_subscriber(subscriber_name, default_filter_level, std::io::stdout);
         init_subscriber(subscriber);
@@ -31,9 +30,9 @@ pub struct ConfirmationLinks {
 
 pub struct TestApp {
     pub address: String,
+    pub port: u16,
     pub db_pool: PgPool,
     pub email_server: MockServer,
-    pub port: u16,
     pub test_user: TestUser,
     pub api_client: reqwest::Client,
     pub email_client: EmailClient,
@@ -93,8 +92,8 @@ impl TestApp {
             confirmation_link
         };
 
-        let html = get_link(&body["HtmlBody"].as_str().unwrap());
-        let plain_text = get_link(&body["TextBody"].as_str().unwrap());
+        let html = get_link(body["HtmlBody"].as_str().unwrap());
+        let plain_text = get_link(body["TextBody"].as_str().unwrap());
         ConfirmationLinks { html, plain_text }
     }
 
@@ -153,16 +152,6 @@ impl TestApp {
             .expect("Failed to execute request.")
     }
 
-    // pub async fn post_newsletters(&self, body: serde_json::Value) -> reqwest::Response {
-    //     self.api_client
-    //         .post(&format!("{}/newsletters", &self.address))
-    //         .basic_auth(&self.test_user.username, Some(&self.test_user.password))
-    //         .json(&body)
-    //         .send()
-    //         .await
-    //         .expect("Failed to execute request.")
-    // }
-
     pub async fn post_publish_newsletter<Body>(&self, body: &Body) -> reqwest::Response
     where
         Body: serde::Serialize,
@@ -187,7 +176,7 @@ impl TestApp {
 }
 
 pub struct TestUser {
-    pub user_id: Uuid,
+    user_id: Uuid,
     pub username: String,
     pub password: String,
 }
@@ -222,7 +211,7 @@ impl TestUser {
         .to_string();
         sqlx::query!(
             "INSERT INTO users (user_id, username, password_hash)
-    VALUES ($1, $2, $3)",
+            VALUES ($1, $2, $3)",
             self.user_id,
             self.username,
             password_hash,
@@ -243,7 +232,7 @@ async fn configure_database(config: &DatabaseSettings) -> PgPool {
         .await
         .expect("Failed to connect to Postgres");
     connection
-        .execute(format!(r#"CREATE DATABASE "{}";"#, config.database_name).as_str())
+        .execute(&*format!(r#"CREATE DATABASE "{}";"#, config.database_name))
         .await
         .expect("Failed to create database.");
 
@@ -269,6 +258,7 @@ pub async fn spawn_app() -> TestApp {
         c.database.database_name = Uuid::new_v4().to_string();
 
         c.application.port = 0;
+
         c.email_client.base_url = email_server.uri();
         c
     };
@@ -280,6 +270,7 @@ pub async fn spawn_app() -> TestApp {
         .expect("Failed to build application.");
     let application_port = application.port();
     let _ = tokio::spawn(application.run_until_stopped());
+
     let client = reqwest::Client::builder()
         .redirect(reqwest::redirect::Policy::none())
         .cookie_store(true)
@@ -295,6 +286,8 @@ pub async fn spawn_app() -> TestApp {
         api_client: client,
         email_client: configuration.email_client.client(),
     };
+
     test_app.test_user.store(&test_app.db_pool).await;
+
     test_app
 }

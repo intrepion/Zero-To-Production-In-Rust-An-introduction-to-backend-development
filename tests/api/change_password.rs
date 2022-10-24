@@ -89,17 +89,8 @@ async fn new_password_fields_must_match() {
     let html_page = app.get_change_password_html().await;
     assert!(html_page.contains(
         "<p><i>You entered two different new passwords - \
-the field values must match.</i></p>"
+         the field values must match.</i></p>"
     ));
-}
-
-#[tokio::test]
-async fn you_must_be_logged_in_to_see_the_change_password_form() {
-    let app = spawn_app().await;
-
-    let response = app.get_change_password().await;
-
-    assert_is_redirect_to(&response, "/login");
 }
 
 #[tokio::test]
@@ -114,6 +105,15 @@ async fn you_must_be_logged_in_to_change_your_password() {
             "new_password_check": &new_password,
         }))
         .await;
+
+    assert_is_redirect_to(&response, "/login");
+}
+
+#[tokio::test]
+async fn you_must_be_logged_in_to_see_the_change_password_form() {
+    let app = spawn_app().await;
+
+    let response = app.get_change_password().await;
 
     assert_is_redirect_to(&response, "/login");
 }
