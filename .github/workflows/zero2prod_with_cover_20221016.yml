@@ -27,6 +27,7 @@ jobs:
         ports:
           - 6379:6379
     env:
+      DATABASE_URL: postgres://postgres:password@localhost:5432/newsletter
       SQLX_VERSION: 0.6.2
       SQLX_FEATURES: postgres
     steps:
@@ -114,6 +115,7 @@ jobs:
         ports:
           - 5432:5432
     env:
+      DATABASE_URL: postgres://postgres:password@localhost:5432/newsletter
       SQLX_VERSION: 0.6.2
       SQLX_FEATURES: postgres
     steps:
@@ -176,6 +178,7 @@ jobs:
         ports:
           - 6379:6379
     env:
+      DATABASE_URL: postgres://postgres:password@localhost:5432/newsletter
       SQLX_VERSION: 0.6.2
       SQLX_FEATURES: postgres
     steps:
@@ -242,6 +245,7 @@ jobs:
         ports:
           - 6379:6379
     env:
+      DATABASE_URL: postgres://postgres:password@localhost:5432/newsletter
       SQLX_VERSION: 0.6.2
       SQLX_FEATURES: postgres
     steps:
