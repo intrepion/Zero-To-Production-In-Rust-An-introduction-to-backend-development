@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-doctl apps create --spec spec.yaml
+doctl apps create --spec .do/app.yaml
