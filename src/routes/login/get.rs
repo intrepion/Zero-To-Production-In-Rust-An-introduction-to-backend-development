@@ -1,8 +1,9 @@
 use actix_web::{http::header::ContentType, HttpResponse};
 use actix_web_flash_messages::IncomingFlashMessages;
-use std::fmt::Write;
+use std::{env, fmt::Write};
 
 pub async fn login_form(flash_messages: IncomingFlashMessages) -> HttpResponse {
+    let client_url = env::var("CLIENT_URL").unwrap_or_else(|_| "http://localhost:8000".to_owned());
     let mut error_html = String::new();
     for m in flash_messages.iter() {
         writeln!(error_html, "<p><i>{}</i></p>", m.content()).unwrap();
@@ -18,6 +19,7 @@ pub async fn login_form(flash_messages: IncomingFlashMessages) -> HttpResponse {
     </head>
     <body>
         {error_html}
+        <p>Client URL: <a href="{client_url}">{client_url}</a></p>
         <form action="/login" method="post">
             <label>Username
                 <input

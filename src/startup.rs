@@ -7,13 +7,14 @@ use crate::{
         log_out, login, login_form, publish_newsletter, publish_newsletter_form, subscribe,
     },
 };
+use actix_cors::Cors;
 use actix_session::{storage::RedisSessionStore, SessionMiddleware};
-use actix_web::{cookie::Key, dev::Server, web, web::Data, App, HttpServer};
+use actix_web::{cookie::Key, dev::Server, http::header, web, web::Data, App, HttpServer};
 use actix_web_flash_messages::{storage::CookieMessageStore, FlashMessagesFramework};
 use actix_web_lab::middleware::from_fn;
 use secrecy::{ExposeSecret, Secret};
 use sqlx::{postgres::PgPoolOptions, PgPool};
-use std::net::TcpListener;
+use std::{env, net::TcpListener};
 use tracing_actix_web::TracingLogger;
 
 pub struct Application {
@@ -80,6 +81,7 @@ async fn run(
     let message_store = CookieMessageStore::builder(secret_key.clone()).build();
     let message_framework = FlashMessagesFramework::builder(message_store).build();
     let redis_store = RedisSessionStore::new(redis_uri.expose_secret()).await?;
+    let client_url = env::var("CLIENT_URL").unwrap_or_else(|_| "http://localhost:8000".to_owned());
     let server = HttpServer::new(move || {
         App::new()
             .wrap(message_framework.clone())
@@ -88,6 +90,15 @@ async fn run(
                 secret_key.clone(),
             ))
             .wrap(TracingLogger::default())
+            .wrap(
+                Cors::default()
+                    .allowed_origin(&client_url)
+                    .allowed_methods(vec!["GET", "POST"])
+                    .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+                    .allowed_header(header::CONTENT_TYPE)
+                    .supports_credentials()
+                    .max_age(3600),
+            )
             .route("/", web::get().to(home))
             .service(
                 web::scope("/admin")
